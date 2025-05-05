@@ -25,8 +25,14 @@ MainWindow::MainWindow(QWidget *parent)
     setMinimumSize(1024, 768);
 
     // 创建API客户端
-    m_apiClient = new ApiClient("http://localhost:8080/api", this);
-    m_apiClient->setSimulationMode(false);    // 切换到真实服务器模式
+    m_apiClient = new ApiClient("", this);    // 初始化时不设置URL，等待配置加载
+
+    // 加载API配置
+    if (!m_apiClient->loadConfig("config.json")) {
+        // 如果配置加载失败，使用默认URL
+        m_apiClient->setBaseUrl("http://localhost:8080/api");
+        qWarning() << "配置加载失败，使用默认服务器地址";
+    }
 
     // 设置模型和视图
     setupModels();

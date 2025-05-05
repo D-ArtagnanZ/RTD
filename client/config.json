@@ -1,7 +1,10 @@
 {
     "serverUrl": "http://localhost:8080/api",
+    "authToken": "",
     "autoRefresh": true,
-    "refreshInterval": 300,
+    "refreshInterval": 30000,
+    "maxRetryCount": 3,
+    "retryInterval": 5000,
     "theme": "light",
     "logLevel": "info",
     "defaultView": "dispatch",
