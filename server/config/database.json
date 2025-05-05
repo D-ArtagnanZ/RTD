@@ -1,25 +1,32 @@
 {
     "connections": {
         "postgres_main": {
-            "type": "postgresql",
+            "type": "QPSQL",
             "host": "localhost",
             "port": 5432,
             "database": "rtd_dispatch",
-            "user": "postgres",
+            "username": "postgres",
             "password": "postgres",
-            "min_connections": 2,
-            "max_connections": 10,
-            "idle_timeout": 60
+            "options": {
+                "application_name": "RTD+ Server"
+            },
+            "pool": {
+                "max_size": 10,
+                "idle_timeout": 300,
+                "connection_timeout": 5
+            }
         },
         "oracle_mes": {
-            "type": "oracle",
+            "type": "QOCI",
             "connection_string": "//mesdb.example.com:1521/MESDB",
-            "user": "mes_reader",
+            "username": "mes_reader",
             "password": "secure_password",
-            "min_connections": 1,
-            "max_connections": 5,
-            "idle_timeout": 120
+            "pool": {
+                "max_size": 5,
+                "idle_timeout": 600,
+                "connection_timeout": 10
+            }
         }
     },
-    "default_connection": "postgres_main"
+    "default": "postgres_main"
 }
