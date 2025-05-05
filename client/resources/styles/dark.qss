@@ -1,0 +1,203 @@
+/* 暗色主题样式表 */
+QMainWindow, QDialog, QWidget {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+QTabWidget::pane {
+    border: 1px solid #3d3d3d;
+    background-color: #2d2d2d;
+    border-radius: 4px;
+}
+
+QTabBar::tab {
+    background-color: #3d3d3d;
+    color: #b0b0b0;
+    min-width: 100px;
+    padding: 8px 16px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    margin-right: 1px;
+}
+
+QTabBar::tab:selected {
+    background-color: #2d2d2d;
+    color: #0096ff;
+    border-bottom: 2px solid #0096ff;
+}
+
+QTableView {
+    background-color: #2d2d2d;
+    alternate-background-color: #333333;
+    gridline-color: #3d3d3d;
+    selection-background-color: #0078d7;
+    selection-color: #ffffff;
+    border: 1px solid #3d3d3d;
+}
+
+QTableView::item {
+    padding: 4px;
+    border-bottom: 1px solid #3d3d3d;
+}
+
+QTableView::item:selected {
+    background-color: #0078d7;
+    color: #ffffff;
+}
+
+QHeaderView::section {
+    background-color: #3d3d3d;
+    padding: 6px;
+    border: none;
+    border-right: 1px solid #2d2d2d;
+    border-bottom: 1px solid #2d2d2d;
+    color: #e0e0e0;
+    font-weight: bold;
+}
+
+QPushButton {
+    background-color: #0078d7;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 3px;
+    border: none;
+}
+
+QPushButton:hover {
+    background-color: #0086e6;
+}
+
+QPushButton:pressed {
+    background-color: #0069c0;
+}
+
+QPushButton:disabled {
+    background-color: #404040;
+    color: #707070;
+}
+
+QComboBox {
+    border: 1px solid #3d3d3d;
+    border-radius: 3px;
+    padding: 4px 8px;
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+    min-width: 100px;
+}
+
+QComboBox:drop-down {
+    background-color: #3d3d3d;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #2d2d2d;
+    border: 1px solid #3d3d3d;
+}
+
+QLineEdit {
+    border: 1px solid #3d3d3d;
+    border-radius: 3px;
+    padding: 4px 8px;
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+QGroupBox {
+    border: 1px solid #3d3d3d;
+    border-radius: 4px;
+    margin-top: 12px;
+    padding-top: 16px;
+    color: #e0e0e0;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 3px;
+    color: #0096ff;
+}
+
+QProgressBar {
+    border: 1px solid #3d3d3d;
+    border-radius: 3px;
+    text-align: center;
+    background-color: #2d2d2d;
+}
+
+QProgressBar::chunk {
+    background-color: #0078d7;
+}
+
+QLabel {
+    color: #e0e0e0;
+}
+
+QMenuBar {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+QMenuBar::item:selected {
+    background-color: #3d3d3d;
+}
+
+QMenu {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+    border: 1px solid #3d3d3d;
+}
+
+QMenu::item:selected {
+    background-color: #0078d7;
+    color: #ffffff;
+}
+
+QStatusBar {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+QToolBar {
+    background-color: #2d2d2d;
+    border: 1px solid #3d3d3d;
+}
+
+/* 状态颜色 */
+.status-ok {
+    color: #00c853;
+}
+
+.status-warning {
+    color: #ffd600;
+}
+
+.status-error {
+    color: #ff3d00;
+}
+
+.status-idle {
+    color: #78909c;
+}
+
+.status-running {
+    color: #29b6f6;
+}
+
+/* 优先级颜色 */
+.priority-high {
+    color: #ff3d00;
+    font-weight: bold;
+}
+
+.priority-medium {
+    color: #ffd600;
+}
+
+.priority-low {
+    color: #00c853;
+}
+
+/* Chart相关样式 */
+QChartView {
+    background-color: #2d2d2d;
+}

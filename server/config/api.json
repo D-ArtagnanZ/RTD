@@ -1,0 +1,64 @@
+{
+    "endpoints": {
+        "lots": {
+            "get_all": {
+                "connection": "oracle_mes",
+                "sql": "SELECT LOT_ID, STATUS, PDID, FLOW, OPER, BALL_COUNT, CREATION_TIME, UPDATE_TIME FROM MES.LOTS WHERE STATUS != 'DELETED' ORDER BY CREATION_TIME DESC",
+                "cache_ttl": 300
+            },
+            "get_by_id": {
+                "connection": "oracle_mes",
+                "sql": "SELECT LOT_ID, STATUS, PDID, FLOW, OPER, BALL_COUNT, CREATION_TIME, UPDATE_TIME FROM MES.LOTS WHERE LOT_ID = :lot_id",
+                "cache_ttl": 60
+            },
+            "create": {
+                "disabled": true,
+                "message": "Creating lots directly is not allowed. Use MES system."
+            }
+        },
+        "equipment": {
+            "get_all": {
+                "connection": "oracle_mes",
+                "sql": "SELECT EQP_ID, STATUS, TEMPERATURE, BALL_COUNT, KIT_SIZE, MAINTENANCE_TIME FROM MES.EQUIPMENT WHERE STATUS != 'DECOMMISSIONED' ORDER BY EQP_ID",
+                "cache_ttl": 300
+            },
+            "get_by_id": {
+                "connection": "oracle_mes",
+                "sql": "SELECT EQP_ID, STATUS, TEMPERATURE, BALL_COUNT, KIT_SIZE, MAINTENANCE_TIME FROM MES.EQUIPMENT WHERE EQP_ID = :eqp_id",
+                "cache_ttl": 60
+            }
+        },
+        "dispatches": {
+            "get_all": {
+                "connection": "postgres_main",
+                "sql": "SELECT id, lot_id, eqp_id, priority, dispatch_time, expected_start, expected_end, status FROM dispatches ORDER BY priority, dispatch_time DESC",
+                "cache_ttl": 120
+            },
+            "get_by_id": {
+                "connection": "postgres_main",
+                "sql": "SELECT id, lot_id, eqp_id, priority, dispatch_time, expected_start, expected_end, status FROM dispatches WHERE id = :id",
+                "cache_ttl": 30
+            },
+            "create": {
+                "connection": "postgres_main",
+                "sql": "INSERT INTO dispatches (lot_id, eqp_id, priority, dispatch_time, expected_start, expected_end, status) VALUES (:lot_id, :eqp_id, :priority, :dispatch_time, :expected_start, :expected_end, :status) RETURNING id"
+            },
+            "update": {
+                "connection": "postgres_main",
+                "sql": "UPDATE dispatches SET lot_id = :lot_id, eqp_id = :eqp_id, priority = :priority, expected_start = :expected_start, expected_end = :expected_end, status = :status WHERE id = :id"
+            },
+            "delete": {
+                "connection": "postgres_main",
+                "sql": "DELETE FROM dispatches WHERE id = :id"
+            },
+            "get_by_lot": {
+                "connection": "postgres_main",
+                "sql": "SELECT id, lot_id, eqp_id, priority, dispatch_time, expected_start, expected_end, status FROM dispatches WHERE lot_id = :lot_id ORDER BY priority"
+            },
+            "get_by_equipment": {
+                "connection": "postgres_main",
+                "sql": "SELECT id, lot_id, eqp_id, priority, dispatch_time, expected_start, expected_end, status FROM dispatches WHERE eqp_id = :eqp_id ORDER BY priority"
+            }
+        }
+    }
+}

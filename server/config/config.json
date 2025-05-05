@@ -1,0 +1,30 @@
+{
+    "server": {
+        "port": 8080,
+        "address": "0.0.0.0",
+        "threads": 4,
+        "timeout_ms": 30000
+    },
+    "logging": {
+        "level": "info",
+        "file": "logs/server.log",
+        "max_size_mb": 10,
+        "max_files": 5
+    },
+    "database": {
+        "config_file": "config/database.json",
+        "connection_timeout": 30,
+        "pool_size": {
+            "postgres": 5,
+            "oracle": 3
+        }
+    },
+    "api": {
+        "config_file": "config/api.json",
+        "cors": {
+            "enabled": true,
+            "allowed_origins": ["*"],
+            "allowed_methods": ["GET", "POST", "PUT", "DELETE"]
+        }
+    }
+}

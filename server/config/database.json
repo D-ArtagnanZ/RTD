@@ -1,0 +1,25 @@
+{
+    "connections": {
+        "postgres_main": {
+            "type": "postgresql",
+            "host": "localhost",
+            "port": 5432,
+            "database": "rtd_dispatch",
+            "user": "postgres",
+            "password": "postgres",
+            "min_connections": 2,
+            "max_connections": 10,
+            "idle_timeout": 60
+        },
+        "oracle_mes": {
+            "type": "oracle",
+            "connection_string": "//mesdb.example.com:1521/MESDB",
+            "user": "mes_reader",
+            "password": "secure_password",
+            "min_connections": 1,
+            "max_connections": 5,
+            "idle_timeout": 120
+        }
+    },
+    "default_connection": "postgres_main"
+}
