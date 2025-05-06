@@ -1,47 +1,93 @@
-set(CLIENT_SOURCES
-    src/main.cpp
-    src/MainWindow.cpp
-    src/models/GenericTableModel.cpp
-    src/models/LotModel.cpp
-    src/models/EquipmentModel.cpp
-    src/models/DispatchModel.cpp
-    src/views/DispatchView.cpp
-    src/views/LotListView.cpp
-    src/views/EquipmentListView.cpp
-    src/ApiClient.cpp
-    src/utils/StyleHelper.cpp
+cmake_minimum_required(VERSION 3.16)
+project(RTDClient VERSION 1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# 自动处理moc、uic、rcc
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+# 确保找得到UI文件
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ui
+)
+
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Network Charts)
+
+# 添加资源文件目录
+add_subdirectory(resources)
+
+# 暂时禁用资源编译以解决图像缺失问题
+set(RESOURCES
     resources/resources.qrc
 )
 
-set(CLIENT_HEADERS
-    src/MainWindow.h
-    src/models/GenericTableModel.h
-    src/models/LotModel.h
-    src/models/EquipmentModel.h
-    src/models/DispatchModel.h
-    src/views/DispatchView.h
-    src/views/LotListView.h
-    src/views/EquipmentListView.h
-    src/ApiClient.h
-    src/utils/StyleHelper.h
+# 源文件
+set(SOURCES
+    src/main.cpp
+    src/mainwindow.cpp
+    src/apiclient.cpp
+    src/equipmentwidget.cpp
+    src/lotwidget.cpp
+    src/dispatchwidget.cpp
+    src/models.cpp
+    src/createtaskdialog.cpp
 )
 
-add_executable(client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
+# 头文件
+set(HEADERS
+    src/mainwindow.h
+    src/apiclient.h
+    src/equipmentwidget.h
+    src/lotwidget.h
+    src/dispatchwidget.h
+    src/models.h
+    src/createtaskdialog.h
+)
 
-target_include_directories(client PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+# UI文件
+set(FORMS
+    src/ui/mainwindow.ui
+    src/ui/equipmentwidget.ui
+    src/ui/lotwidget.ui
+    src/ui/dispatchwidget.ui
+    src/ui/createtaskdialog.ui
+)
 
-target_link_libraries(client PRIVATE
+# 确保UI文件目录存在
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/ui)
+
+# 创建可执行文件
+add_executable(rtdclient
+    ${SOURCES}
+    ${HEADERS}
+    ${FORMS}
+    ${RESOURCES}
+)
+
+# 确保包含目录
+target_include_directories(rtdclient PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+# 链接Qt库
+target_link_libraries(rtdclient PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
     Qt6::Network
-    nlohmann_json::nlohmann_json
+    Qt6::Charts
 )
 
-# 设置输出路径
-set_target_properties(client PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+# 安装目标
+install(TARGETS rtdclient
+    RUNTIME DESTINATION bin
 )
 
-# 复制配置文件到输出目录
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.json" "${CMAKE_BINARY_DIR}/bin/config.json" COPYONLY)
+# 安装配置文件和资源
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/resources
+    DESTINATION share/rtdclient
+)

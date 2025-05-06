@@ -1,0 +1,1 @@
+Driver={Oracle};Server=localhost;Uid=username;Pwd=password;Database=SID;

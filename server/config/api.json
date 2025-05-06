@@ -1,83 +1,53 @@
 {
-    "endpoints": {
-        "lots": {
-            "get_all": {
-                "connection": "oracle_mes",
-                "method": "GET",
-                "path": "/api/lots",
-                "sql": "SELECT LOT_ID, STATUS, PDID, FLOW, OPER, BALL_COUNT, TO_CHAR(CREATION_TIME, 'YYYY-MM-DD\"T\"HH24:MI:SS') AS CREATION_TIME, TO_CHAR(UPDATE_TIME, 'YYYY-MM-DD\"T\"HH24:MI:SS') AS UPDATE_TIME FROM MES.LOTS WHERE STATUS != 'DELETED' ORDER BY CREATION_TIME DESC"
-            },
-            "get_by_id": {
-                "connection": "oracle_mes",
-                "method": "GET",
-                "path": "/api/lots/:id",
-                "sql": "SELECT LOT_ID, STATUS, PDID, FLOW, OPER, BALL_COUNT, TO_CHAR(CREATION_TIME, 'YYYY-MM-DD\"T\"HH24:MI:SS') AS CREATION_TIME, TO_CHAR(UPDATE_TIME, 'YYYY-MM-DD\"T\"HH24:MI:SS') AS UPDATE_TIME FROM MES.LOTS WHERE LOT_ID = :id"
-            },
-            "create": {
-                "disabled": true,
-                "message": "Creating lots directly is not allowed. Use MES system."
-            }
-        },
-        "equipment": {
-            "get_all": {
-                "connection": "oracle_mes",
-                "method": "GET",
-                "path": "/api/equipment",
-                "sql": "SELECT EQP_ID, STATUS, TEMPERATURE, BALL_COUNT, KIT_SIZE, TO_CHAR(MAINTENANCE_TIME, 'YYYY-MM-DD') AS MAINTENANCE_TIME FROM MES.EQUIPMENT WHERE STATUS != 'DECOMMISSIONED' ORDER BY EQP_ID"
-            },
-            "get_by_id": {
-                "connection": "oracle_mes",
-                "method": "GET",
-                "path": "/api/equipment/:id",
-                "sql": "SELECT EQP_ID, STATUS, TEMPERATURE, BALL_COUNT, KIT_SIZE, TO_CHAR(MAINTENANCE_TIME, 'YYYY-MM-DD') AS MAINTENANCE_TIME FROM MES.EQUIPMENT WHERE EQP_ID = :id"
-            }
-        },
-        "dispatches": {
-            "get_all": {
-                "connection": "postgres_main",
-                "method": "GET",
-                "path": "/api/dispatches",
-                "sql": "SELECT id, lot_id, eqp_id, priority, to_char(dispatch_time, 'YYYY-MM-DD\"T\"HH24:MI:SS') as dispatch_time, to_char(expected_start, 'YYYY-MM-DD\"T\"HH24:MI:SS') as expected_start, to_char(expected_end, 'YYYY-MM-DD\"T\"HH24:MI:SS') as expected_end, status FROM dispatches ORDER BY priority, dispatch_time DESC"
-            },
-            "get_by_id": {
-                "connection": "postgres_main",
-                "method": "GET",
-                "path": "/api/dispatches/:id",
-                "sql": "SELECT id, lot_id, eqp_id, priority, to_char(dispatch_time, 'YYYY-MM-DD\"T\"HH24:MI:SS') as dispatch_time, to_char(expected_start, 'YYYY-MM-DD\"T\"HH24:MI:SS') as expected_start, to_char(expected_end, 'YYYY-MM-DD\"T\"HH24:MI:SS') as expected_end, status FROM dispatches WHERE id = :id"
-            },
-            "create": {
-                "connection": "postgres_main",
-                "method": "POST",
-                "path": "/api/dispatches",
-                "sql": "INSERT INTO dispatches (lot_id, eqp_id, priority, dispatch_time, expected_start, expected_end, status) VALUES (:lot_id, :eqp_id, :priority, CURRENT_TIMESTAMP, :expected_start, :expected_end, :status) RETURNING id"
-            },
-            "update": {
-                "connection": "postgres_main",
-                "method": "PUT",
-                "path": "/api/dispatches/:id",
-                "sql": "UPDATE dispatches SET lot_id = :lot_id, eqp_id = :eqp_id, priority = :priority, expected_start = :expected_start, expected_end = :expected_end, status = :status WHERE id = :id"
-            },
-            "delete": {
-                "connection": "postgres_main",
-                "method": "DELETE",
-                "path": "/api/dispatches/:id",
-                "sql": "DELETE FROM dispatches WHERE id = :id"
-            },
-            "get_by_lot": {
-                "connection": "postgres_main",
-                "sql": "SELECT id, lot_id, eqp_id, priority, dispatch_time, expected_start, expected_end, status FROM dispatches WHERE lot_id = :lot_id ORDER BY priority"
-            },
-            "get_by_equipment": {
-                "connection": "postgres_main",
-                "sql": "SELECT id, lot_id, eqp_id, priority, dispatch_time, expected_start, expected_end, status FROM dispatches WHERE eqp_id = :eqp_id ORDER BY priority"
-            }
-        },
-        "health": {
-            "check": {
-                "method": "GET",
-                "path": "/api/health",
-                "handler": "health_check"
-            }
-        }
+  "queries":[
+    {
+    "id":"getEqpById",
+    "data_source":"Oracle",
+    "description":"根据设备ID获取设备信息",
+    "sql":"SELECT * FROM eqp WHERE id = ?",
+    "params":["id"]
+    },
+    {
+      "id":"getLotById",
+      "data_source":"Oracle",
+      "description":"根据批次ID获取批次信息",
+      "sql":"SELECT * FROM lot WHERE id = ?",
+      "params":["id"]
+    },
+    {
+      "id":"getEqpList",
+      "data_source":"Oracle",
+      "description":"获取设备列表",
+      "sql":"SELECT * FROM (SELECT a.*, ROWNUM rnum FROM (SELECT * FROM eqp ORDER BY id) a WHERE ROWNUM <= :page_no * :page_size) WHERE rownum > (:page_no - 1) * :page_size",
+      "params":["page_no","page_size"]
+    },
+    {
+      "id":"getLotList",
+      "data_source":"Oracle",
+      "description":"获取批次列表",
+      "sql":"SELECT * FROM (SELECT a.*, ROWNUM rnum FROM (SELECT * FROM lot ORDER BY id) a WHERE ROWNUM <= :page_no * :page_size) WHERE rownum > (:page_no - 1) * :page_size",
+      "params":["page_no","page_size"]
+    },
+    {
+      "id":"getDispatchList",
+      "data_source":"PostgreSQL",
+      "description":"获取调度列表",
+      "sql":"SELECT * FROM dispatch ORDER BY id LIMIT :page_size OFFSET (:page_no - 1) * :page_size",
+      "params":["page_no","page_size"]
+    },
+    {
+      "id":"searchDispatchByEqpId",
+      "data_source":"PostgreSQL",
+      "description":"根据设备ID搜索调度记录",
+      "sql":"SELECT * FROM dispatch WHERE eqp_id = ?",
+      "params":["eqp_id"]
+    },
+    {
+      "id":"searchDispatchByLotId",
+      "data_source":"PostgreSQL",
+      "description":"根据批次ID搜索调度记录",
+      "sql":"SELECT * FROM dispatch WHERE lot_id = ?",
+      "params":["lot_id"]
     }
+  ]
 }

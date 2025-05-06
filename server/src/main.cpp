@@ -1,66 +1,53 @@
-#include "Server.h"
-
-#include <QCommandLineParser>
-#include <QCoreApplication>
+#include "api_handler.h"
+#include "db_manager.h"
+#include "http_server.h"
 #include <csignal>
 #include <iostream>
 
-// 全局服务器指针，用于信号处理
-Server *g_server = nullptr;
+// 全局HTTP服务器实例
+std::unique_ptr<HttpServer> g_server;
 
-// 信号处理函数
+// 信号处理
 void signalHandler(int signal)
 {
-    std::cout << "接收到信号: " << signal << std::endl;
+    std::cout << "接收到信号: " << signal << "，正在关闭服务器..." << std::endl;
     if (g_server) {
         g_server->stop();
-        // 让应用程序退出事件循环
-        QCoreApplication::quit();
     }
 }
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName("RTD+ Server");
-    QCoreApplication::setApplicationVersion("1.0.0");
+    try {
+        // 设置信号处理
+        std::signal(SIGINT, signalHandler);
+        std::signal(SIGTERM, signalHandler);
 
-    // 设置信号处理
-    signal(SIGINT, signalHandler);     // Ctrl+C
-    signal(SIGTERM, signalHandler);    // kill命令
+        // 初始化数据库管理器
+        if (!DbManager::instance().initialize()) {
+            std::cerr << "初始化数据库管理器失败" << std::endl;
+            return 1;
+        }
 
-    // 命令行参数解析
-    QCommandLineParser parser;
-    parser.setApplicationDescription("RTD+ 派工服务器");
-    parser.addHelpOption();
-    parser.addVersionOption();
+        // 初始化API处理器
+        if (!ApiHandler::instance().initialize()) {
+            std::cerr << "初始化API处理器失败" << std::endl;
+            return 1;
+        }
 
-    // 配置文件选项
-    QCommandLineOption configOption(QStringList() << "c" << "config",
-                                    "配置文件路径",
-                                    "file",
-                                    "config/server.json");
-    parser.addOption(configOption);
+        // 创建并启动HTTP服务器
+        int port = 8080;
+        if (argc > 1) {
+            port = std::stoi(argv[1]);
+        }
 
-    parser.process(app);
+        g_server = std::make_unique<HttpServer>(port);
+        g_server->start();
 
-    QString configPath = parser.value(configOption);
-
-    // 创建服务器实例
-    Server server;
-    g_server = &server;
-
-    // 初始化并启动服务器
-    if (!server.initialize(configPath)) {
-        std::cerr << "服务器初始化失败\n";
+        return 0;
+    }
+    catch (const std::exception &e) {
+        std::cerr << "运行时错误: " << e.what() << std::endl;
         return 1;
     }
-
-    if (!server.start()) {
-        std::cerr << "服务器启动失败\n";
-        return 1;
-    }
-
-    // 进入事件循环
-    return app.exec();
 }

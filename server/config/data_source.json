@@ -1,0 +1,14 @@
+{
+  "Oracle":{
+    "dsn_path":"./config/dsn/oracle.dsn",
+    "min_conn":1,
+    "max_conn":10,
+    "conn_timeout":5
+  },
+  "PostgreSQL":{
+    "dsn_path":"./config/dsn/postgresql.dsn",
+    "min_conn":1,
+    "max_conn":10,
+    "conn_timeout":5
+  }
+}
