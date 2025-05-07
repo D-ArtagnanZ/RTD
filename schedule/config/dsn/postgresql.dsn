@@ -1,0 +1,1 @@
+Driver={PostgreSQL};Server=localhost;Port=5432;Database=mydb;Uid=username;Pwd=password;

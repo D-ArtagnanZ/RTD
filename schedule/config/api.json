@@ -1,0 +1,32 @@
+{
+  "api":[
+    {
+      "id":"getEqpList",
+      "data_source":"Oracle",
+      "description":"获取设备列表",
+      "sql":"SELECT EQP_ID FROM EQPLIST",
+      "params":[]
+    },
+    {
+      "id":"getLotListByEqpId",
+      "data_source":"Oracle",
+      "description":"根据设备ID获取批次列表",
+      "sql":"SELECT LOT_ID FROM LOTLIST WHERE EQP_ID = ?",
+      "params":["eqp_id"]
+    },
+    {
+      "id":"getProcessTime",
+      "data_source":"Oracle",
+      "description":"获取设备处理时间",
+      "sql":"SELECT PROCESS_TIME FROM EQPLIST WHERE EQP_ID =:eqp_id AND LOT_ID =:lot_id",
+      "params":["eqp_id","lot_id"]
+    },
+    {
+      "id":"insertDispatch",
+      "data_source":"PostgreSQL",
+      "description":"插入调度记录",
+      "sql":"INSERT INTO dispatch (eqp_id, lot_id, solution_release_time, start_time, end_time) VALUES (?, ?, ?, ?, ?)",
+      "params":["eqp_id","lot_id","solution_release_time","start_time","end_time"]
+    }
+  ]
+}

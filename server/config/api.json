@@ -48,6 +48,27 @@
       "description":"根据批次ID搜索调度记录",
       "sql":"SELECT * FROM dispatch WHERE lot_id = ?",
       "params":["lot_id"]
+    },
+    {
+      "id":"countEqp",
+      "data_source":"Oracle",
+      "description":"获取设备总数",
+      "sql":"SELECT COUNT(*) as total FROM eqp",
+      "params":[]
+    },
+    {
+      "id":"countLot",
+      "data_source":"Oracle",
+      "description":"获取批次总数",
+      "sql":"SELECT COUNT(*) as total FROM lot",
+      "params":[]
+    },
+    {
+      "id":"countDispatch",
+      "data_source":"PostgreSQL",
+      "description":"获取调度总数",
+      "sql":"SELECT COUNT(*) as total FROM dispatch",
+      "params":[]
     }
   ]
 }
